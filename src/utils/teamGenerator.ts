@@ -68,12 +68,18 @@ export const generateBalancedTeams = (
       players.reduce((sum, p) => sum + calculatePlayerAverage(p), 0) / players.length;
     const maleCount = players.filter((p) => p.gender === "M").length;
     const femaleCount = players.filter((p) => p.gender === "F").length;
+    const strongServeCount = players.filter((p) => p.serve === "strong").length;
+    const strongSpikeCount = players.filter((p) => p.spike === "strong").length;
+    const strongBlockCount = players.filter((p) => p.block === "strong").length;
 
     return {
       players,
       averageScore,
       maleCount,
       femaleCount,
+      strongServeCount,
+      strongSpikeCount,
+      strongBlockCount,
     };
   });
 };

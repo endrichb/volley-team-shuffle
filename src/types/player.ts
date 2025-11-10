@@ -1,3 +1,5 @@
+export type SkillLevel = "weak" | "medium" | "strong";
+
 export interface Player {
   id: string;
   name: string;
@@ -5,8 +7,10 @@ export interface Player {
   technical: number; // 0-10
   physical: number; // 0-10
   gender: "M" | "F";
-  serve?: "weak" | "medium" | "strong";
-  strongSpike?: boolean;
+  serve?: SkillLevel;
+  spike?: SkillLevel;
+  block?: SkillLevel;
+  observations?: string;
   isTemporary?: boolean;
 }
 
@@ -15,6 +19,9 @@ export interface Team {
   averageScore: number;
   maleCount: number;
   femaleCount: number;
+  strongServeCount: number;
+  strongSpikeCount: number;
+  strongBlockCount: number;
 }
 
 export interface GeneratedTeams {

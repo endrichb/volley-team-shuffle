@@ -47,6 +47,11 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        skill: {
+          serve: "hsl(var(--skill-serve))",
+          spike: "hsl(var(--skill-spike))",
+          block: "hsl(var(--skill-block))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

@@ -10,6 +10,7 @@ interface GeneratorControlsProps {
   onGenerate: (numberOfTeams: 2 | 3) => void;
   onSave?: () => void;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 export const GeneratorControls = ({
@@ -17,6 +18,7 @@ export const GeneratorControls = ({
   onGenerate,
   onSave,
   disabled,
+  isLoading,
 }: GeneratorControlsProps) => {
   const [numberOfTeams, setNumberOfTeams] = useState<"2" | "3">("2");
 
@@ -75,12 +77,12 @@ export const GeneratorControls = ({
           <div className="flex gap-2">
             <Button
               onClick={handleGenerate}
-              disabled={!canGenerate || disabled}
+              disabled={!canGenerate || disabled || isLoading}
               className="flex-1 gap-2"
               size="lg"
             >
-              <Shuffle className="w-4 h-4" />
-              Gerar Times
+              <Shuffle className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
+              {isLoading ? "Gerando..." : "Gerar Times"}
             </Button>
             {onSave && (
               <Button

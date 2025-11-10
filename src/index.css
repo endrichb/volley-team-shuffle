@@ -8,40 +8,43 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 220 15% 20%;
+    --background: 0 0% 98%;
+    --foreground: 218 11% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 20%;
+    --card-foreground: 218 11% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 20%;
+    --popover-foreground: 218 11% 15%;
 
-    --primary: 200 95% 45%;
+    --primary: 357 82% 51%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 100% 55%;
+    --secondary: 221 63% 32%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 30% 94%;
-    --muted-foreground: 220 15% 50%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 218 11% 45%;
 
-    --accent: 150 65% 50%;
+    --accent: 221 63% 32%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 25% 88%;
-    --input: 210 25% 88%;
-    --ring: 200 95% 45%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 357 82% 51%;
 
     --radius: 0.75rem;
     
-    --gradient-volleyball: linear-gradient(135deg, hsl(200 95% 45%), hsl(30 100% 55%));
-    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(210 40% 98%));
-    --shadow-card: 0 4px 12px -2px hsl(200 95% 45% / 0.15);
-    --shadow-hover: 0 8px 24px -4px hsl(200 95% 45% / 0.25);
+    --gradient-atenas: linear-gradient(135deg, hsl(357 82% 51%), hsl(221 63% 32%));
+    --gradient-card: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --shadow-card: 0 4px 12px -2px hsl(357 82% 51% / 0.15);
+    --shadow-hover: 0 8px 24px -4px hsl(357 82% 51% / 0.25);
+    --skill-serve: 46 100% 50%;
+    --skill-spike: 357 82% 51%;
+    --skill-block: 221 63% 32%;
 
     --sidebar-background: 0 0% 98%;
 
@@ -61,38 +64,41 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 220 20% 12%;
-    --foreground: 210 40% 98%;
+    --background: 218 20% 12%;
+    --foreground: 0 0% 98%;
 
-    --card: 220 18% 16%;
-    --card-foreground: 210 40% 98%;
+    --card: 218 18% 16%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 220 18% 16%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 218 18% 16%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 200 95% 55%;
+    --primary: 357 82% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 30 100% 60%;
+    --secondary: 221 63% 40%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 220 15% 22%;
-    --muted-foreground: 210 30% 70%;
+    --muted: 218 15% 22%;
+    --muted-foreground: 0 0% 70%;
 
-    --accent: 150 65% 55%;
+    --accent: 221 63% 40%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 25%;
-    --input: 220 15% 25%;
-    --ring: 200 95% 55%;
+    --border: 218 15% 25%;
+    --input: 218 15% 25%;
+    --ring: 357 82% 55%;
     
-    --gradient-volleyball: linear-gradient(135deg, hsl(200 95% 55%), hsl(30 100% 60%));
-    --gradient-card: linear-gradient(135deg, hsl(220 18% 16%), hsl(220 18% 18%));
+    --gradient-atenas: linear-gradient(135deg, hsl(357 82% 55%), hsl(221 63% 40%));
+    --gradient-card: linear-gradient(135deg, hsl(218 18% 16%), hsl(218 18% 18%));
     --shadow-card: 0 4px 12px -2px hsl(0 0% 0% / 0.3);
     --shadow-hover: 0 8px 24px -4px hsl(0 0% 0% / 0.4);
+    --skill-serve: 46 100% 55%;
+    --skill-spike: 357 82% 55%;
+    --skill-block: 221 63% 45%;
   }
 }
 
@@ -103,5 +109,20 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+
+  @media print {
+    body {
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+    
+    .print\:hidden {
+      display: none !important;
+    }
+    
+    .print\:break-inside-avoid {
+      break-inside: avoid;
+    }
   }
 }

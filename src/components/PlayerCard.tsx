@@ -1,8 +1,9 @@
-import { Player } from "@/types/player";
+import { Player, SkillLevel } from "@/types/player";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -10,7 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User, Zap, Activity } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { User, Zap, Activity, Wind, Swords, Shield } from "lucide-react";
 
 interface PlayerCardProps {
   player: Player;
@@ -32,6 +38,22 @@ export const PlayerCard = ({ player, onUpdate }: PlayerCardProps) => {
 
   const handleGenderChange = (value: "M" | "F") => {
     onUpdate({ ...player, gender: value });
+  };
+
+  const handleServeChange = (value: SkillLevel) => {
+    onUpdate({ ...player, serve: value });
+  };
+
+  const handleSpikeChange = (value: SkillLevel) => {
+    onUpdate({ ...player, spike: value });
+  };
+
+  const handleBlockChange = (value: SkillLevel) => {
+    onUpdate({ ...player, block: value });
+  };
+
+  const handleObservationsChange = (value: string) => {
+    onUpdate({ ...player, observations: value });
   };
 
   const average = ((player.technical + player.physical) / 2).toFixed(1);
@@ -112,6 +134,90 @@ export const PlayerCard = ({ player, onUpdate }: PlayerCardProps) => {
                   <span className="text-muted-foreground">Média:</span>
                   <span className="font-bold text-primary">{average}</span>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 pt-2">
+                <div className="space-y-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Label className="text-xs flex items-center gap-1 cursor-help">
+                        <Wind className="w-3 h-3" style={{ color: "hsl(var(--skill-serve))" }} />
+                        Saque
+                      </Label>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Qualidade do saque do jogador</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Select value={player.serve || "medium"} onValueChange={handleServeChange}>
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weak">Fraco</SelectItem>
+                      <SelectItem value="medium">Médio</SelectItem>
+                      <SelectItem value="strong">Forte</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Label className="text-xs flex items-center gap-1 cursor-help">
+                        <Swords className="w-3 h-3" style={{ color: "hsl(var(--skill-spike))" }} />
+                        Cortada
+                      </Label>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Potência da cortada do jogador</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Select value={player.spike || "medium"} onValueChange={handleSpikeChange}>
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weak">Fraca</SelectItem>
+                      <SelectItem value="medium">Média</SelectItem>
+                      <SelectItem value="strong">Forte</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Label className="text-xs flex items-center gap-1 cursor-help">
+                        <Shield className="w-3 h-3" style={{ color: "hsl(var(--skill-block))" }} />
+                        Bloqueio
+                      </Label>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Qualidade do bloqueio do jogador</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Select value={player.block || "medium"} onValueChange={handleBlockChange}>
+                    <SelectTrigger className="h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="weak">Fraco</SelectItem>
+                      <SelectItem value="medium">Médio</SelectItem>
+                      <SelectItem value="strong">Forte</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-1.5 pt-2">
+                <Label className="text-xs">Observações</Label>
+                <Textarea
+                  value={player.observations || ""}
+                  onChange={(e) => handleObservationsChange(e.target.value)}
+                  placeholder="Notas sobre o jogador..."
+                  className="min-h-[60px] text-xs resize-none"
+                />
               </div>
             </div>
           )}
