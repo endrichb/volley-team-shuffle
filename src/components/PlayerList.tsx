@@ -54,6 +54,9 @@ export const PlayerList = ({ players, onPlayersUpdate }: PlayerListProps) => {
       technical: 5,
       physical: 5,
       gender: newPlayerGender,
+      serve: "overhand-soft",
+      spike: "normal",
+      block: "no-jump",
       isTemporary: true,
     };
 

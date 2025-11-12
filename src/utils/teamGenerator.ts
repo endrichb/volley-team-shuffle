@@ -15,37 +15,41 @@ const shuffleArray = <T,>(array: T[]): T[] => {
 
 export const generateBalancedTeams = (
   presentPlayers: Player[],
-  numberOfTeams: 2 | 3
+  numberOfTeams: 2 | 3,
+  intelligentBalance: boolean = true
 ): Team[] => {
-  if (presentPlayers.length < numberOfTeams * 6) {
-    throw new Error("Jogadores insuficientes");
-  }
-
   const playersPerTeam = numberOfTeams === 2 ? 7 : 6;
   const totalPlayers = numberOfTeams * playersPerTeam;
+
+  if (presentPlayers.length < totalPlayers) {
+    throw new Error(`Jogadores insuficientes. Necessário: ${totalPlayers}, Disponível: ${presentPlayers.length}`);
+  }
 
   // Limitar aos jogadores necessários
   const selectedPlayers = presentPlayers.slice(0, totalPlayers);
 
-  // Separar por gênero
-  const males = selectedPlayers.filter((p) => p.gender === "M");
-  const females = selectedPlayers.filter((p) => p.gender === "F");
+  // Se não for balanceamento inteligente, apenas embaralha
+  if (!intelligentBalance) {
+    const shuffled = shuffleArray(selectedPlayers);
+    const teams: Player[][] = Array.from({ length: numberOfTeams }, () => []);
+    
+    shuffled.forEach((player, index) => {
+      teams[index % numberOfTeams].push(player);
+    });
 
-  // Ordenar por média (decrescente)
-  males.sort((a, b) => calculatePlayerAverage(b) - calculatePlayerAverage(a));
-  females.sort((a, b) => calculatePlayerAverage(b) - calculatePlayerAverage(a));
+    return teams.map((players) => createTeamStats(players));
+  }
 
-  // Inicializar times
+  // Balanceamento inteligente usando snake draft
+  const sorted = [...selectedPlayers].sort(
+    (a, b) => calculatePlayerAverage(b) - calculatePlayerAverage(a)
+  );
+
   const teams: Player[][] = Array.from({ length: numberOfTeams }, () => []);
-
-  // Distribuir jogadores de forma alternada (snake draft)
-  const allPlayers = [...males, ...females];
-  allPlayers.sort((a, b) => calculatePlayerAverage(b) - calculatePlayerAverage(a));
-
   let currentTeam = 0;
-  let direction = 1; // 1 para frente, -1 para trás
+  let direction = 1; // 1 = forward, -1 = backward
 
-  for (const player of allPlayers) {
+  for (const player of sorted) {
     teams[currentTeam].push(player);
 
     currentTeam += direction;
@@ -59,27 +63,30 @@ export const generateBalancedTeams = (
     }
   }
 
-  // Embaralhar dentro de cada time para não ficar previsível
+  // Embaralhar dentro de cada time
   const shuffledTeams = teams.map((team) => shuffleArray(team));
 
-  // Criar objetos Team com estatísticas
-  return shuffledTeams.map((players) => {
-    const averageScore =
-      players.reduce((sum, p) => sum + calculatePlayerAverage(p), 0) / players.length;
-    const maleCount = players.filter((p) => p.gender === "M").length;
-    const femaleCount = players.filter((p) => p.gender === "F").length;
-    const strongServeCount = players.filter((p) => p.serve === "strong").length;
-    const strongSpikeCount = players.filter((p) => p.spike === "strong").length;
-    const strongBlockCount = players.filter((p) => p.block === "strong").length;
+  return shuffledTeams.map((players) => createTeamStats(players));
+};
 
-    return {
-      players,
-      averageScore,
-      maleCount,
-      femaleCount,
-      strongServeCount,
-      strongSpikeCount,
-      strongBlockCount,
-    };
-  });
+const createTeamStats = (players: Player[]): Team => {
+  const averageScore =
+    players.reduce((sum, p) => sum + calculatePlayerAverage(p), 0) / players.length;
+  const maleCount = players.filter((p) => p.gender === "M").length;
+  const femaleCount = players.filter((p) => p.gender === "F").length;
+  const strongServeCount = players.filter(
+    (p) => p.serve === "overhand-strong" || p.serve === "underhand-strong"
+  ).length;
+  const strongSpikeCount = players.filter((p) => p.spike === "strong").length;
+  const strongBlockCount = players.filter((p) => p.block === "jumps").length;
+
+  return {
+    players,
+    averageScore,
+    maleCount,
+    femaleCount,
+    strongServeCount,
+    strongSpikeCount,
+    strongBlockCount,
+  };
 };

@@ -1,4 +1,4 @@
-import { Player, SkillLevel } from "@/types/player";
+import { Player, ServeLevel, SpikeLevel, BlockLevel } from "@/types/player";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
@@ -40,15 +40,15 @@ export const PlayerCard = ({ player, onUpdate }: PlayerCardProps) => {
     onUpdate({ ...player, gender: value });
   };
 
-  const handleServeChange = (value: SkillLevel) => {
+  const handleServeChange = (value: ServeLevel) => {
     onUpdate({ ...player, serve: value });
   };
 
-  const handleSpikeChange = (value: SkillLevel) => {
+  const handleSpikeChange = (value: SpikeLevel) => {
     onUpdate({ ...player, spike: value });
   };
 
-  const handleBlockChange = (value: SkillLevel) => {
+  const handleBlockChange = (value: BlockLevel) => {
     onUpdate({ ...player, block: value });
   };
 
@@ -149,14 +149,15 @@ export const PlayerCard = ({ player, onUpdate }: PlayerCardProps) => {
                       <p>Qualidade do saque do jogador</p>
                     </TooltipContent>
                   </Tooltip>
-                  <Select value={player.serve || "medium"} onValueChange={handleServeChange}>
+                  <Select value={player.serve} onValueChange={handleServeChange}>
                     <SelectTrigger className="h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="weak">Fraco</SelectItem>
-                      <SelectItem value="medium">Médio</SelectItem>
-                      <SelectItem value="strong">Forte</SelectItem>
+                      <SelectItem value="underhand-soft">🎈 Por baixo fofo</SelectItem>
+                      <SelectItem value="underhand-strong">💪 Por baixo forte</SelectItem>
+                      <SelectItem value="overhand-soft">🏐 Por cima fofo</SelectItem>
+                      <SelectItem value="overhand-strong">🔥 Por cima forte</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -173,14 +174,14 @@ export const PlayerCard = ({ player, onUpdate }: PlayerCardProps) => {
                       <p>Potência da cortada do jogador</p>
                     </TooltipContent>
                   </Tooltip>
-                  <Select value={player.spike || "medium"} onValueChange={handleSpikeChange}>
+                  <Select value={player.spike} onValueChange={handleSpikeChange}>
                     <SelectTrigger className="h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="weak">Fraca</SelectItem>
-                      <SelectItem value="medium">Média</SelectItem>
-                      <SelectItem value="strong">Forte</SelectItem>
+                      <SelectItem value="soft">🐱 Corte fofo</SelectItem>
+                      <SelectItem value="normal">✋ Corte normal</SelectItem>
+                      <SelectItem value="strong">💥 Corte forte</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -197,14 +198,13 @@ export const PlayerCard = ({ player, onUpdate }: PlayerCardProps) => {
                       <p>Qualidade do bloqueio do jogador</p>
                     </TooltipContent>
                   </Tooltip>
-                  <Select value={player.block || "medium"} onValueChange={handleBlockChange}>
+                  <Select value={player.block} onValueChange={handleBlockChange}>
                     <SelectTrigger className="h-8 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="weak">Fraco</SelectItem>
-                      <SelectItem value="medium">Médio</SelectItem>
-                      <SelectItem value="strong">Forte</SelectItem>
+                      <SelectItem value="no-jump">🚫 Não pula</SelectItem>
+                      <SelectItem value="jumps">🦘 Pula no bloqueio</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

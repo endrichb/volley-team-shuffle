@@ -1,4 +1,6 @@
-export type SkillLevel = "weak" | "medium" | "strong";
+export type ServeLevel = "underhand-soft" | "underhand-strong" | "overhand-soft" | "overhand-strong";
+export type SpikeLevel = "soft" | "normal" | "strong";
+export type BlockLevel = "no-jump" | "jumps";
 
 export interface Player {
   id: string;
@@ -7,9 +9,9 @@ export interface Player {
   technical: number; // 0-10
   physical: number; // 0-10
   gender: "M" | "F";
-  serve?: SkillLevel;
-  spike?: SkillLevel;
-  block?: SkillLevel;
+  serve: ServeLevel;
+  spike: SpikeLevel;
+  block: BlockLevel;
   observations?: string;
   isTemporary?: boolean;
 }

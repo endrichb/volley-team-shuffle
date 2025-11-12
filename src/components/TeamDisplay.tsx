@@ -101,13 +101,13 @@ export const TeamDisplay = ({ teams }: TeamDisplayProps) => {
                           ({player.gender})
                         </span>
                         <div className="flex gap-1 ml-auto shrink-0">
-                          {player.serve === "strong" && (
+                          {(player.serve === "overhand-strong" || player.serve === "underhand-strong") && (
                             <Wind className="w-3 h-3" style={{ color: "hsl(var(--skill-serve))" }} />
                           )}
                           {player.spike === "strong" && (
                             <Swords className="w-3 h-3" style={{ color: "hsl(var(--skill-spike))" }} />
                           )}
-                          {player.block === "strong" && (
+                          {player.block === "jumps" && (
                             <Shield className="w-3 h-3" style={{ color: "hsl(var(--skill-block))" }} />
                           )}
                         </div>
