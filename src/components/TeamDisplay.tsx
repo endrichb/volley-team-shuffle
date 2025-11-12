@@ -1,7 +1,7 @@
 import { Team } from "@/types/player";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, TrendingUp, Wind, Swords, Shield } from "lucide-react";
+import { Users, TrendingUp, Wind, Swords, Shield, Star } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -12,6 +12,47 @@ interface TeamDisplayProps {
   teams: Team[];
 }
 
+const calculateBalanceQuality = (teams: Team[]): { difference: number; quality: number; stars: number; message: string } => {
+  const averages = teams.map(t => t.averageScore);
+  const maxAvg = Math.max(...averages);
+  const minAvg = Math.min(...averages);
+  const difference = maxAvg - minAvg;
+
+  // Verificar distribuição de habilidades
+  const serveVariance = Math.max(...teams.map(t => t.strongServeCount)) - Math.min(...teams.map(t => t.strongServeCount));
+  const spikeVariance = Math.max(...teams.map(t => t.strongSpikeCount)) - Math.min(...teams.map(t => t.strongSpikeCount));
+  const blockVariance = Math.max(...teams.map(t => t.strongBlockCount)) - Math.min(...teams.map(t => t.strongBlockCount));
+  const skillsBalanced = serveVariance <= 1 && spikeVariance <= 1 && blockVariance <= 1;
+
+  let stars = 0;
+  let message = "";
+  let quality = 0;
+
+  if (difference < 0.5 && skillsBalanced) {
+    stars = 5;
+    message = "Excelente";
+    quality = 100;
+  } else if (difference < 0.8) {
+    stars = 4;
+    message = "Muito Bom";
+    quality = 80;
+  } else if (difference < 1.2) {
+    stars = 3;
+    message = "Bom";
+    quality = 60;
+  } else if (difference < 1.8) {
+    stars = 2;
+    message = "Regular";
+    quality = 40;
+  } else {
+    stars = 1;
+    message = "Considere ajustar atributos";
+    quality = 20;
+  }
+
+  return { difference, quality, stars, message };
+};
+
 export const TeamDisplay = ({ teams }: TeamDisplayProps) => {
   const teamColors = [
     "bg-gradient-to-br from-primary/10 to-primary/5 border-primary/30",
@@ -19,9 +60,60 @@ export const TeamDisplay = ({ teams }: TeamDisplayProps) => {
     "bg-gradient-to-br from-accent/10 to-accent/5 border-accent/30",
   ];
 
+  const balanceAnalysis = calculateBalanceQuality(teams);
+
   return (
-    <div className="space-y-4 print:space-y-2">
+    <div className="space-y-6 print:space-y-2">
       <h2 className="text-2xl font-bold text-foreground print:text-xl">Times Gerados</h2>
+      
+      {/* Análise de Qualidade */}
+      <Card className="p-6 bg-gradient-to-br from-primary/5 to-secondary/5 border-primary/20 print:hidden">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">📊 Análise de Balanceamento</h3>
+            <div className="flex gap-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star
+                  key={i}
+                  className={`w-5 h-5 ${i < balanceAnalysis.stars ? 'fill-yellow-500 text-yellow-500' : 'text-muted'}`}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Diferença de Médias</p>
+              <p className="text-2xl font-bold text-foreground">
+                {balanceAnalysis.difference.toFixed(2)}
+                <span className={`text-sm ml-2 ${balanceAnalysis.difference < 0.5 ? 'text-success' : balanceAnalysis.difference < 1.2 ? 'text-warning' : 'text-destructive'}`}>
+                  {balanceAnalysis.difference < 0.5 ? '✅ Ótimo!' : balanceAnalysis.difference < 1.2 ? '⚠️ Bom' : '❌ Regular'}
+                </span>
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Distribuição M/F</p>
+              <p className="text-lg font-bold text-foreground">
+                {Math.abs(Math.max(...teams.map(t => t.maleCount)) - Math.min(...teams.map(t => t.maleCount))) <= 1 ? '✅ Equilibrada' : '⚠️ Desigual'}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Habilidades Especiais</p>
+              <p className="text-lg font-bold text-foreground">
+                {Math.max(...teams.map(t => t.strongServeCount)) - Math.min(...teams.map(t => t.strongServeCount)) <= 1 &&
+                 Math.max(...teams.map(t => t.strongSpikeCount)) - Math.min(...teams.map(t => t.strongSpikeCount)) <= 1
+                  ? '✅ Bem distribuídas'
+                  : '⚠️ Variável'}
+              </p>
+            </div>
+          </div>
+          <div className="pt-2 border-t border-border">
+            <p className="text-center text-lg font-semibold text-primary">
+              Qualidade: {balanceAnalysis.message}
+            </p>
+          </div>
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4 print:gap-2">
         {teams.map((team, index) => (
           <Card

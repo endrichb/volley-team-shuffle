@@ -62,7 +62,7 @@ export const Step2Attributes = ({ players, onPlayersUpdate, onNext, onBack }: St
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-6 animate-fade-in pb-8">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-foreground mb-2">
           2️⃣ Configure os Atributos dos Jogadores

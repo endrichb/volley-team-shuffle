@@ -5,14 +5,11 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 
 interface Step3GenerateProps {
   players: Player[];
   numberOfTeams: 2 | 3;
   onNumberOfTeamsChange: (value: 2 | 3) => void;
-  intelligentBalance: boolean;
-  onIntelligentBalanceChange: (value: boolean) => void;
   onGenerate: () => void;
   onBack: () => void;
   isGenerating: boolean;
@@ -22,8 +19,6 @@ export const Step3Generate = ({
   players,
   numberOfTeams,
   onNumberOfTeamsChange,
-  intelligentBalance,
-  onIntelligentBalanceChange,
   onGenerate,
   onBack,
   isGenerating,
@@ -152,23 +147,6 @@ export const Step3Generate = ({
                 </Label>
               </div>
             </RadioGroup>
-          </div>
-
-          {/* Balanceamento Inteligente */}
-          <div className="flex items-center justify-between p-4 bg-muted rounded-lg">
-            <div className="space-y-1">
-              <Label htmlFor="intelligent-balance">Balanceamento Inteligente</Label>
-              <p className="text-sm text-muted-foreground">
-                {intelligentBalance
-                  ? "Considera todos os atributos para balancear"
-                  : "Sorteia aleatoriamente"}
-              </p>
-            </div>
-            <Switch
-              id="intelligent-balance"
-              checked={intelligentBalance}
-              onCheckedChange={onIntelligentBalanceChange}
-            />
           </div>
 
           {/* Validação */}

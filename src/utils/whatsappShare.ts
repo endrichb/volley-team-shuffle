@@ -11,16 +11,16 @@ export const shareTeamsOnWhatsApp = (teams: Team[]) => {
 
   teams.forEach((team, index) => {
     message += `*TIME ${index + 1}* (Média: ${team.averageScore.toFixed(1)})\n`;
-    message += `👨 ${team.maleCount} | 👩 ${team.femaleCount}\n\n`;
+    message += `👨 ${team.maleCount} | 👩 ${team.femaleCount}\n`;
+    message += `🔥 ${team.strongServeCount} sacador${team.strongServeCount !== 1 ? 'es' : ''} forte${team.strongServeCount !== 1 ? 's' : ''}\n`;
+    message += `💥 ${team.strongSpikeCount} cortador${team.strongSpikeCount !== 1 ? 'es' : ''} forte${team.strongSpikeCount !== 1 ? 's' : ''}\n`;
+    message += `🦘 ${team.strongBlockCount} bloqueador${team.strongBlockCount !== 1 ? 'es' : ''}\n\n`;
     
-    team.players.forEach((player) => {
-      const avg = ((player.technical + player.physical) / 2).toFixed(1);
-      message += `${player.name} (${avg})\n`;
+    team.players.forEach((player, idx) => {
+      message += `${idx + 1}. ${player.name}\n`;
     });
     
-    message += `\n🔥 ${team.strongServeCount} sacadores fortes\n`;
-    message += `💥 ${team.strongSpikeCount} cortadores fortes\n`;
-    message += `🦘 ${team.strongBlockCount} bloqueadores\n\n`;
+    message += `\n`;
   });
 
   message += `🏫 Escola Leonel Brizola`;

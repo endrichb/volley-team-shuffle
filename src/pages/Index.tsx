@@ -25,7 +25,6 @@ const Index = () => {
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [players, setPlayers] = useState<Player[]>([]);
   const [numberOfTeams, setNumberOfTeams] = useState<2 | 3>(2);
-  const [intelligentBalance, setIntelligentBalance] = useState(true);
   const [generatedTeams, setGeneratedTeams] = useState<Team[] | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
@@ -42,7 +41,6 @@ const Index = () => {
 
     if (savedPreferences) {
       const prefs = JSON.parse(savedPreferences);
-      setIntelligentBalance(prefs.intelligentBalance ?? true);
       setNumberOfTeams(prefs.numberOfTeams ?? 2);
     }
   }, []);
@@ -56,24 +54,34 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEYS.PREFERENCES,
-      JSON.stringify({ intelligentBalance, numberOfTeams })
+      JSON.stringify({ numberOfTeams })
     );
-  }, [intelligentBalance, numberOfTeams]);
+  }, [numberOfTeams]);
 
   const handleGenerateTeams = () => {
     setIsGenerating(true);
     
+    toast({
+      title: "Calculando melhor distribuição... 🧮",
+      description: "Analisando jogadores e habilidades...",
+    });
+    
     setTimeout(() => {
       try {
         const presentPlayers = players.filter((p) => p.isPresent);
-        const teams = generateBalancedTeams(presentPlayers, numberOfTeams, intelligentBalance);
+        const teams = generateBalancedTeams(presentPlayers, numberOfTeams);
         setGeneratedTeams(teams);
 
         celebrateTeamsGeneration();
 
+        // Scroll para o resultado
+        setTimeout(() => {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }, 300);
+
         toast({
           title: "🎉 Times gerados com sucesso!",
-          description: `${numberOfTeams} times foram criados${intelligentBalance ? " com balanceamento inteligente" : ""}.`,
+          description: `${numberOfTeams} times foram criados com balanceamento inteligente.`,
         });
       } catch (error) {
         toast({
@@ -84,7 +92,7 @@ const Index = () => {
       } finally {
         setIsGenerating(false);
       }
-    }, 1500);
+    }, 2000);
   };
 
   const handleRegenerateTeams = () => {
@@ -169,8 +177,6 @@ const Index = () => {
             players={players}
             numberOfTeams={numberOfTeams}
             onNumberOfTeamsChange={setNumberOfTeams}
-            intelligentBalance={intelligentBalance}
-            onIntelligentBalanceChange={setIntelligentBalance}
             onGenerate={handleGenerateTeams}
             onBack={() => setCurrentStep(2)}
             isGenerating={isGenerating}

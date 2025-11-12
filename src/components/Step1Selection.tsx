@@ -40,9 +40,9 @@ export const Step1Selection = ({ players, onPlayersUpdate, onNext }: Step1Select
         ? {
             ...p,
             isPresent: !p.isPresent,
-            // Set defaults when marking as present
-            technical: !p.isPresent && p.technical === 0 ? 5 : p.technical,
-            physical: !p.isPresent && p.physical === 0 ? 5 : p.physical,
+            // Set defaults when marking as present - valores em 0 para forçar avaliação consciente
+            technical: !p.isPresent ? 0 : p.technical,
+            physical: !p.isPresent ? 0 : p.physical,
             serve: !p.isPresent && !p.serve ? "overhand-soft" as const : p.serve,
             spike: !p.isPresent && !p.spike ? "normal" as const : p.spike,
             block: !p.isPresent && !p.block ? "no-jump" as const : p.block,
@@ -57,8 +57,8 @@ export const Step1Selection = ({ players, onPlayersUpdate, onNext }: Step1Select
       players.map((p) => ({
         ...p,
         isPresent: true,
-        technical: p.technical === 0 ? 5 : p.technical,
-        physical: p.physical === 0 ? 5 : p.physical,
+        technical: 0,
+        physical: 0,
         serve: !p.serve ? "overhand-soft" : p.serve,
         spike: !p.spike ? "normal" : p.spike,
         block: !p.block ? "no-jump" : p.block,
@@ -77,8 +77,8 @@ export const Step1Selection = ({ players, onPlayersUpdate, onNext }: Step1Select
       id: `temp-${Date.now()}`,
       name: newPlayerName.trim(),
       isPresent: true,
-      technical: 5,
-      physical: 5,
+      technical: 0,
+      physical: 0,
       gender: newPlayerGender,
       serve: "overhand-soft",
       spike: "normal",
