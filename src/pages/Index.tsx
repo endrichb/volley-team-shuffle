@@ -60,8 +60,45 @@ const Index = () => {
     );
   }, [numberOfTeams, balancePriority]);
 
+  const determineNumberOfTeams = (totalPlayers: number): 2 | 3 | null => {
+    if (totalPlayers >= 16) return 3;
+    if (totalPlayers >= 10) return 2;
+    return null;
+  };
+
   const handleGenerateTeams = () => {
+    const presentPlayers = players.filter((p) => p.isPresent);
+    const totalPlayers = presentPlayers.length;
+    const autoNumberOfTeams = determineNumberOfTeams(totalPlayers);
+
+    if (!autoNumberOfTeams) {
+      toast({
+        title: "Jogadores insuficientes",
+        description: "⚠️ Mínimo de 10 jogadores necessários para gerar times",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (totalPlayers > 21) {
+      toast({
+        title: "Muitos jogadores",
+        description: "⚠️ Máximo de 21 jogadores. Alguns ficarão fora dos times.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const idealPlayers = autoNumberOfTeams === 2 ? 14 : 18;
+    if (totalPlayers < idealPlayers) {
+      toast({
+        title: "Aviso",
+        description: `⚠️ Faltam ${idealPlayers - totalPlayers} jogador(es) para a formação ideal`,
+      });
+    }
+
     setIsGenerating(true);
+    setNumberOfTeams(autoNumberOfTeams);
     
     toast({
       title: "Calculando melhor distribuição... 🧮",
@@ -70,8 +107,7 @@ const Index = () => {
     
     setTimeout(() => {
       try {
-        const presentPlayers = players.filter((p) => p.isPresent);
-        const teams = generateBalancedTeams(presentPlayers, numberOfTeams, balancePriority);
+        const teams = generateBalancedTeams(presentPlayers, autoNumberOfTeams, balancePriority);
         setGeneratedTeams(teams);
 
         celebrateTeamsGeneration();
@@ -83,7 +119,7 @@ const Index = () => {
 
         toast({
           title: "🎉 Times gerados com sucesso!",
-          description: `${numberOfTeams} times foram criados com balanceamento inteligente.`,
+          description: `${autoNumberOfTeams} times foram criados com balanceamento inteligente.`,
         });
       } catch (error) {
         toast({
@@ -135,6 +171,7 @@ const Index = () => {
   };
 
   const handleChangePriority = () => {
+    setGeneratedTeams(null);
     setCurrentStep(3);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -231,9 +268,7 @@ const Index = () => {
         return (
           <Step3Generate
             players={players}
-            numberOfTeams={numberOfTeams}
             balancePriority={balancePriority}
-            onNumberOfTeamsChange={setNumberOfTeams}
             onBalancePriorityChange={setBalancePriority}
             onGenerate={handleGenerateTeams}
             onBack={() => setCurrentStep(2)}

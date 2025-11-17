@@ -15,9 +15,7 @@ import {
 
 interface Step3GenerateProps {
   players: Player[];
-  numberOfTeams: 2 | 3;
   balancePriority: BalancePriority;
-  onNumberOfTeamsChange: (value: 2 | 3) => void;
   onBalancePriorityChange: (value: BalancePriority) => void;
   onGenerate: () => void;
   onBack: () => void;
@@ -26,15 +24,24 @@ interface Step3GenerateProps {
 
 export const Step3Generate = ({
   players,
-  numberOfTeams,
   balancePriority,
-  onNumberOfTeamsChange,
   onBalancePriorityChange,
   onGenerate,
   onBack,
   isGenerating,
 }: Step3GenerateProps) => {
   const presentPlayers = players.filter((p) => p.isPresent);
+  const totalPlayers = presentPlayers.length;
+  
+  const determineNumberOfTeams = (): 2 | 3 | null => {
+    if (totalPlayers >= 16) return 3;
+    if (totalPlayers >= 10) return 2;
+    return null;
+  };
+  
+  const numberOfTeams = determineNumberOfTeams();
+  const idealPlayers = numberOfTeams === 2 ? 14 : numberOfTeams === 3 ? 18 : 0;
+  
   const totalAverage =
     presentPlayers.reduce((sum, p) => sum + (p.technical + p.physical) / 2, 0) / presentPlayers.length;
   const maleCount = presentPlayers.filter((p) => p.gender === "M").length;
@@ -46,8 +53,7 @@ export const Step3Generate = ({
   const strongSpikers = presentPlayers.filter((p) => p.spike === "strong").length;
   const blockers = presentPlayers.filter((p) => p.block === "jumps").length;
 
-  const requiredPlayers = numberOfTeams === 2 ? 14 : 18;
-  const hasEnoughPlayers = presentPlayers.length >= requiredPlayers;
+  const hasEnoughPlayers = totalPlayers >= 10 && totalPlayers <= 21;
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -167,30 +173,40 @@ export const Step3Generate = ({
             </div>
           </div>
 
-          {/* Número de Times */}
+          {/* Configuração Automática */}
           <div className="space-y-3">
-            <Label>Número de Times</Label>
-            <RadioGroup value={String(numberOfTeams)} onValueChange={(v) => onNumberOfTeamsChange(Number(v) as 2 | 3)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="2" id="two-teams" />
-                <Label htmlFor="two-teams" className="cursor-pointer">
-                  2 Times (7 jogadores cada) - Mínimo 14 jogadores
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="3" id="three-teams" />
-                <Label htmlFor="three-teams" className="cursor-pointer">
-                  3 Times (6 jogadores cada) - Mínimo 18 jogadores
-                </Label>
-              </div>
-            </RadioGroup>
+            <Label>📋 Configuração Automática</Label>
+            <div className="p-4 bg-primary/10 border border-primary/20 rounded-lg">
+              <p className="text-lg">
+                {totalPlayers} jogadores selecionados → 
+                <strong className="text-primary ml-2">
+                  {numberOfTeams ? `${numberOfTeams} times` : 'Jogadores insuficientes'}
+                </strong>
+              </p>
+              {numberOfTeams && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  {numberOfTeams === 3 
+                    ? '3 times de aproximadamente 6 jogadores cada'
+                    : '2 times de aproximadamente 7 jogadores cada'
+                  }
+                </p>
+              )}
+              {idealPlayers > 0 && totalPlayers < idealPlayers && (
+                <p className="text-sm text-warning mt-2">
+                  ⚠️ Faltam {idealPlayers - totalPlayers} jogador(es) para a formação ideal
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Validação */}
           {!hasEnoughPlayers && (
             <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
               <p className="text-sm text-destructive font-semibold">
-                ⚠️ Selecione pelo menos {requiredPlayers} jogadores para {numberOfTeams} times
+                {totalPlayers < 10 
+                  ? '⚠️ Mínimo de 10 jogadores necessários para gerar times'
+                  : '⚠️ Máximo de 21 jogadores suportados. Alguns ficarão fora dos times.'
+                }
               </p>
             </div>
           )}

@@ -123,6 +123,19 @@ const findBestSwap = (
   return bestSwap;
 };
 
+const distributePlayerCounts = (totalPlayers: number, numberOfTeams: number): number[] => {
+  const base = Math.floor(totalPlayers / numberOfTeams);
+  const remainder = totalPlayers % numberOfTeams;
+  
+  const teamSizes: number[] = [];
+  for (let i = 0; i < numberOfTeams; i++) {
+    teamSizes.push(i < remainder ? base + 1 : base);
+  }
+  
+  console.log(`Distribuição: ${totalPlayers} jogadores → ${numberOfTeams} times:`, teamSizes);
+  return teamSizes;
+};
+
 export const generateBalancedTeams = (
   presentPlayers: Player[],
   numberOfTeams: 2 | 3,
@@ -134,15 +147,10 @@ export const generateBalancedTeams = (
   const weights = getWeightsForPriority(priority);
   console.log("Pesos:", weights);
   console.log("Jogadores:", presentPlayers.map((j) => `${j.name} (${j.gender})`));
-  const playersPerTeam = numberOfTeams === 2 ? 7 : 6;
-  const totalPlayers = numberOfTeams * playersPerTeam;
-
-  if (presentPlayers.length < totalPlayers) {
-    throw new Error(`Jogadores insuficientes. Necessário: ${totalPlayers}, Disponível: ${presentPlayers.length}`);
-  }
-
-  // Limitar aos jogadores necessários
-  const selectedPlayers = presentPlayers.slice(0, totalPlayers);
+  
+  const totalPlayers = presentPlayers.length;
+  const teamSizes = distributePlayerCounts(totalPlayers, numberOfTeams);
+  const selectedPlayers = presentPlayers;
 
   // FASE 1: SNAKE DRAFT
   // Ordenar jogadores por média (maior → menor)
@@ -156,11 +164,26 @@ export const generateBalancedTeams = (
   let currentTeam = 0;
   let direction = 1;
 
-  // FASE 1: SNAKE DRAFT
+  // FASE 1: SNAKE DRAFT with size limits
   for (const player of sorted) {
+    // Find next available team that isn't full
+    while (teams[currentTeam].length >= teamSizes[currentTeam]) {
+      currentTeam += direction;
+      
+      if (currentTeam >= numberOfTeams) {
+        currentTeam = numberOfTeams - 1;
+        direction = -1;
+      } else if (currentTeam < 0) {
+        currentTeam = 0;
+        direction = 1;
+      }
+    }
+    
     teams[currentTeam].push(player);
+    
+    // Move to next team
     currentTeam += direction;
-
+    
     if (currentTeam >= numberOfTeams) {
       currentTeam = numberOfTeams - 1;
       direction = -1;
