@@ -201,9 +201,16 @@ export const TeamDisplay = ({ teams }: TeamDisplayProps) => {
                           )}
                           {player.block === "jumps" && (
                             <Shield className="w-3 h-3" style={{ color: "hsl(var(--skill-block))" }} />
-                          )}
-                        </div>
-                      </div>
+                )}
+              </div>
+              
+              {/* Warning for incomplete teams */}
+              {team.players.length < 6 && (
+                <p className="text-sm text-destructive mt-2">
+                  ⚠️ Falta(m) {6 - team.players.length} jogador(es) para time completo
+                </p>
+              )}
+            </div>
                       <span className="text-sm font-semibold text-primary ml-2 shrink-0 print:text-xs">
                         {avg}
                       </span>
