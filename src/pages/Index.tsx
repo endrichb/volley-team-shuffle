@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Player, Team } from "@/types/player";
+import { Player, Team, BalancePriority } from "@/types/player";
 import { initialPlayers } from "@/data/initialPlayers";
 import { generateBalancedTeams } from "@/utils/teamGenerator";
-import { shareTeamsOnWhatsApp } from "@/utils/whatsappShare";
+import { shareTeamsOnWhatsApp, copyTeamsToClipboard } from "@/utils/whatsappShare";
 import { celebrateTeamsGeneration } from "@/utils/confetti";
 import { TeamDisplay } from "@/components/TeamDisplay";
 import { StepIndicator } from "@/components/StepIndicator";
@@ -11,7 +11,7 @@ import { Step2Attributes } from "@/components/Step2Attributes";
 import { Step3Generate } from "@/components/Step3Generate";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { RotateCcw, Share2, Home } from "lucide-react";
+import { RotateCcw, Share2, Home, Copy, Settings } from "lucide-react";
 import atenasLogo from "@/assets/atenas-logo.png";
 
 const STORAGE_KEYS = {
@@ -25,6 +25,7 @@ const Index = () => {
   const [currentStep, setCurrentStep] = useState<Step>(1);
   const [players, setPlayers] = useState<Player[]>([]);
   const [numberOfTeams, setNumberOfTeams] = useState<2 | 3>(2);
+  const [balancePriority, setBalancePriority] = useState<BalancePriority>("balanced");
   const [generatedTeams, setGeneratedTeams] = useState<Team[] | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const { toast } = useToast();
@@ -42,6 +43,7 @@ const Index = () => {
     if (savedPreferences) {
       const prefs = JSON.parse(savedPreferences);
       setNumberOfTeams(prefs.numberOfTeams ?? 2);
+      setBalancePriority(prefs.balancePriority ?? "balanced");
     }
   }, []);
 
@@ -54,9 +56,9 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem(
       STORAGE_KEYS.PREFERENCES,
-      JSON.stringify({ numberOfTeams })
+      JSON.stringify({ numberOfTeams, balancePriority })
     );
-  }, [numberOfTeams]);
+  }, [numberOfTeams, balancePriority]);
 
   const handleGenerateTeams = () => {
     setIsGenerating(true);
@@ -69,7 +71,7 @@ const Index = () => {
     setTimeout(() => {
       try {
         const presentPlayers = players.filter((p) => p.isPresent);
-        const teams = generateBalancedTeams(presentPlayers, numberOfTeams);
+        const teams = generateBalancedTeams(presentPlayers, numberOfTeams, balancePriority);
         setGeneratedTeams(teams);
 
         celebrateTeamsGeneration();
@@ -109,6 +111,34 @@ const Index = () => {
     }
   };
 
+  const handleCopyResult = async () => {
+    if (generatedTeams) {
+      const success = await copyTeamsToClipboard(generatedTeams);
+      if (success) {
+        toast({
+          title: "✅ Resultado copiado!",
+          description: "Cole no WhatsApp ou onde preferir.",
+        });
+      } else {
+        toast({
+          title: "Erro ao copiar",
+          description: "Tente novamente.",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleAdjustPlayers = () => {
+    setCurrentStep(2);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleChangePriority = () => {
+    setCurrentStep(3);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleBackToStart = () => {
     setGeneratedTeams(null);
     setCurrentStep(1);
@@ -121,7 +151,7 @@ const Index = () => {
           <div className="flex flex-wrap items-center justify-center gap-2 print:hidden">
             <Button
               onClick={handleRegenerateTeams}
-              variant="outline"
+              variant="default"
               size="sm"
               className="gap-2"
               disabled={isGenerating}
@@ -130,13 +160,39 @@ const Index = () => {
               Gerar Novamente
             </Button>
             <Button
+              onClick={handleAdjustPlayers}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Settings className="w-4 h-4" />
+              Ajustar Jogadores
+            </Button>
+            <Button
+              onClick={handleChangePriority}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              ⚖️ Mudar Prioridade
+            </Button>
+            <Button
               onClick={handleShareWhatsApp}
               variant="outline"
               size="sm"
               className="gap-2"
             >
               <Share2 className="w-4 h-4" />
-              Compartilhar no WhatsApp
+              WhatsApp
+            </Button>
+            <Button
+              onClick={handleCopyResult}
+              variant="outline"
+              size="sm"
+              className="gap-2"
+            >
+              <Copy className="w-4 h-4" />
+              Copiar
             </Button>
             <Button
               onClick={handleBackToStart}
@@ -145,7 +201,7 @@ const Index = () => {
               className="gap-2"
             >
               <Home className="w-4 h-4" />
-              Voltar ao Início
+              Início
             </Button>
           </div>
           <TeamDisplay teams={generatedTeams} />
@@ -176,7 +232,9 @@ const Index = () => {
           <Step3Generate
             players={players}
             numberOfTeams={numberOfTeams}
+            balancePriority={balancePriority}
             onNumberOfTeamsChange={setNumberOfTeams}
+            onBalancePriorityChange={setBalancePriority}
             onGenerate={handleGenerateTeams}
             onBack={() => setCurrentStep(2)}
             isGenerating={isGenerating}
