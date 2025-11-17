@@ -10,7 +10,7 @@ export const initialPlayers: Player[] = [
   { id: "7", name: "Alexandre", isPresent: false, technical: 8, physical: 7, gender: "M", serve: "overhand-soft", spike: "normal", block: "no-jump" },
   { id: "8", name: "Camila", isPresent: false, technical: 6, physical: 6, gender: "F", serve: "overhand-soft", spike: "normal", block: "no-jump" },
   { id: "9", name: "Aline", isPresent: false, technical: 7, physical: 6, gender: "F", serve: "overhand-soft", spike: "normal", block: "no-jump" },
-  { id: "10", name: "Cris", isPresent: false, technical: 7, physical: 7, gender: "F", serve: "overhand-soft", spike: "normal", block: "no-jump" },
+  { id: "10", name: "Cris", isPresent: false, technical: 7, physical: 7, gender: "M", serve: "overhand-soft", spike: "normal", block: "no-jump" },
   { id: "11", name: "Henrique", isPresent: false, technical: 8, physical: 8, gender: "M", serve: "overhand-soft", spike: "normal", block: "no-jump" },
   { id: "12", name: "Rafaela", isPresent: false, technical: 6, physical: 7, gender: "F", serve: "overhand-soft", spike: "normal", block: "no-jump" },
   { id: "13", name: "Navarro", isPresent: false, technical: 8, physical: 8, gender: "M", serve: "overhand-soft", spike: "normal", block: "no-jump" },

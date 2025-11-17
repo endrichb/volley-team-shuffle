@@ -1,15 +1,24 @@
-import { Player } from "@/types/player";
+import { Player, BalancePriority } from "@/types/player";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Wind, Swords, Shield, Users, TrendingUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Step3GenerateProps {
   players: Player[];
   numberOfTeams: 2 | 3;
+  balancePriority: BalancePriority;
   onNumberOfTeamsChange: (value: 2 | 3) => void;
+  onBalancePriorityChange: (value: BalancePriority) => void;
   onGenerate: () => void;
   onBack: () => void;
   isGenerating: boolean;
@@ -18,7 +27,9 @@ interface Step3GenerateProps {
 export const Step3Generate = ({
   players,
   numberOfTeams,
+  balancePriority,
   onNumberOfTeamsChange,
+  onBalancePriorityChange,
   onGenerate,
   onBack,
   isGenerating,
@@ -130,6 +141,32 @@ export const Step3Generate = ({
         <h3 className="text-lg font-semibold text-foreground mb-4">⚙️ Configuração da Partida</h3>
         
         <div className="space-y-6">
+          {/* Prioridade de Balanceamento */}
+          <div className="space-y-3">
+            <Label className="text-base font-semibold">⚖️ Prioridade de Balanceamento</Label>
+            <p className="text-sm text-muted-foreground">
+              Escolha o critério mais importante para equilibrar os times:
+            </p>
+            <Select value={balancePriority} onValueChange={(v) => onBalancePriorityChange(v as BalancePriority)}>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="balanced">🎯 Equilibrado (Recomendado)</SelectItem>
+                <SelectItem value="gender">👥 Priorizar Gênero (M/F equilibrado)</SelectItem>
+                <SelectItem value="skill">⭐ Priorizar Habilidades (saque/corte/bloqueio)</SelectItem>
+                <SelectItem value="score">📊 Priorizar Pontuação (técnica + física)</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            <div className="mt-3 p-3 bg-muted/50 rounded-lg space-y-1 text-xs text-muted-foreground">
+              <p><strong className="text-foreground">Equilibrado:</strong> Considera todos os critérios de forma balanceada</p>
+              <p><strong className="text-foreground">Gênero:</strong> Garante mesma quantidade de homens/mulheres por time</p>
+              <p><strong className="text-foreground">Habilidades:</strong> Distribui sacadores, cortadores e bloqueadores uniformemente</p>
+              <p><strong className="text-foreground">Pontuação:</strong> Foca em médias iguais, pode desbalancear gênero</p>
+            </div>
+          </div>
+
           {/* Número de Times */}
           <div className="space-y-3">
             <Label>Número de Times</Label>

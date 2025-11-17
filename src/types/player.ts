@@ -16,6 +16,8 @@ export interface Player {
   isTemporary?: boolean;
 }
 
+export type BalancePriority = "balanced" | "gender" | "skill" | "score";
+
 export interface Team {
   players: Player[];
   averageScore: number;
